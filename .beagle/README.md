@@ -18,8 +18,8 @@ docker run -it --rm \
 -v $PWD/:/go/src/github.com/docker/docker \
 -w /go/src/github.com/docker/docker \
 -e VERSION=20.10.19-beagle \
--e PLATFORM="Beagle Cloud Team 2018-2028" \
--e PRODUCT="Beagle Cloud Team 2018-2028" \
+-e PLATFORM="Beagle Cloud Team 2018-2022" \
+-e PRODUCT="Beagle Cloud Team 2018-2022" \
 registry.cn-qingdao.aliyuncs.com/wod/golang:1.19-bullseye \
 bash .beagle/build.sh
 ```

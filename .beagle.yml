@@ -40,8 +40,8 @@ steps:
     image: registry.cn-qingdao.aliyuncs.com/wod/golang:1.19-bullseye
     environment:
       VERSION: 20.10.19-beagle
-      PLATFORM: Beagle Cloud Team 2018-2028
-      PRODUCT: Beagle Cloud Team 2018-2028
+      PLATFORM: Beagle Cloud Team 2018-2022
+      PRODUCT: Beagle Cloud Team 2018-2022
     commands:
       - bash .beagle/build.sh
 
