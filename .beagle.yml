@@ -39,7 +39,7 @@ steps:
   - name: golang
     image: registry.cn-qingdao.aliyuncs.com/wod/golang:1.19-bullseye
     environment:
-      VERSION: 20.10.19-beagle
+      VERSION: 20.10.20-beagle
       PLATFORM: Beagle Cloud Team 2018-2022
       PRODUCT: Beagle Cloud Team 2018-2022
     commands:
@@ -54,7 +54,7 @@ steps:
       base: registry.cn-qingdao.aliyuncs.com/wod/alpine:3-amd64
       dockerfile: .beagle/dockerfile
       repo: wod/dockerd
-      version: 'v20.10.19'
+      version: 'v20.10.20'
       channel: amd64
       args: 'TARGETOS=linux,TARGETARCH=amd64'
       registry: registry.cn-qingdao.aliyuncs.com
@@ -72,7 +72,7 @@ steps:
       base: registry.cn-qingdao.aliyuncs.com/wod/alpine:3-arm64
       dockerfile: .beagle/dockerfile
       repo: wod/dockerd
-      version: 'v20.10.19'
+      version: 'v20.10.20'
       channel: arm64
       args: 'TARGETOS=linux,TARGETARCH=arm64'
       registry: registry.cn-qingdao.aliyuncs.com
@@ -90,7 +90,7 @@ steps:
       base: registry.cn-qingdao.aliyuncs.com/wod/alpine:3-ppc64le
       dockerfile: .beagle/dockerfile
       repo: wod/dockerd
-      version: 'v20.10.19'
+      version: 'v20.10.20'
       channel: ppc64le
       args: 'TARGETOS=linux,TARGETARCH=ppc64le'
       registry: registry.cn-qingdao.aliyuncs.com
@@ -108,7 +108,7 @@ steps:
       base: registry.cn-qingdao.aliyuncs.com/wod/alpine:3-mips64le
       dockerfile: .beagle/dockerfile
       repo: wod/dockerd
-      version: 'v20.10.19'
+      version: 'v20.10.20'
       channel: mips64le
       args: 'TARGETOS=linux,TARGETARCH=mips64le'
       registry: registry.cn-qingdao.aliyuncs.com
@@ -124,8 +124,8 @@ steps:
         path: /var/run/docker.sock
     settings:
       platforms: linux/amd64,linux/arm64,linux/ppc64le
-      template: registry.cn-qingdao.aliyuncs.com/wod/dockerd:v20.10.19-ARCH
-      target: registry.cn-qingdao.aliyuncs.com/wod/dockerd:v20.10.19
+      template: registry.cn-qingdao.aliyuncs.com/wod/dockerd:v20.10.20-ARCH
+      target: registry.cn-qingdao.aliyuncs.com/wod/dockerd:v20.10.20
       username:
         from_secret: REGISTRY_USER_ALIYUN
       password:
