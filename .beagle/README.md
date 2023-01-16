@@ -1,4 +1,4 @@
-# git
+# dockerd
 
 <https://github.com/moby/moby>
 
@@ -7,7 +7,7 @@ git remote add upstream git@github.com:moby/moby.git
 
 git fetch upstream
 
-git merge v20.10.21
+git merge v20.10.22
 ```
 
 ## build
@@ -17,9 +17,9 @@ git merge v20.10.21
 docker run -it --rm \
 -v $PWD/:/go/src/github.com/docker/docker \
 -w /go/src/github.com/docker/docker \
--e VERSION=20.10.21-beagle \
--e PLATFORM="Beagle Cloud Team 2018-2022" \
--e PRODUCT="Beagle Cloud Team 2018-2022" \
+-e VERSION=20.10.22-beagle \
+-e PLATFORM="Beagle Cloud Team 2018-2023" \
+-e PRODUCT="Beagle Cloud Team 2018-2023" \
 registry.cn-qingdao.aliyuncs.com/wod/golang:1.19-bullseye \
 bash .beagle/build.sh
 ```
@@ -33,7 +33,8 @@ docker run --rm \
   -e PLUGIN_ENDPOINT=$PLUGIN_ENDPOINT \
   -e PLUGIN_ACCESS_KEY=$PLUGIN_ACCESS_KEY \
   -e PLUGIN_SECRET_KEY=$PLUGIN_SECRET_KEY \
-  -e PLUGIN_PATH="/cache/open-beagle/moby" \
+  -e DRONE_REPO_OWNER="open-beagle" \
+  -e DRONE_REPO_NAME="moby" \
   -e PLUGIN_MOUNT="./.git" \
   -v $(pwd):$(pwd) \
   -w $(pwd) \
@@ -45,7 +46,8 @@ docker run --rm \
   -e PLUGIN_ENDPOINT=$PLUGIN_ENDPOINT \
   -e PLUGIN_ACCESS_KEY=$PLUGIN_ACCESS_KEY \
   -e PLUGIN_SECRET_KEY=$PLUGIN_SECRET_KEY \
-  -e PLUGIN_PATH="/cache/open-beagle/moby" \
+  -e DRONE_REPO_OWNER="open-beagle" \
+  -e DRONE_REPO_NAME="moby" \
   -v $(pwd):$(pwd) \
   -w $(pwd) \
   registry.cn-qingdao.aliyuncs.com/wod/devops-s3-cache:1.0
