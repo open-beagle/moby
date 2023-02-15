@@ -98,24 +98,6 @@ steps:
       registry_password:
         from_secret: REGISTRY_PASSWORD_ALIYUN
 
-  - name: docker-mips64le
-    image: registry.cn-qingdao.aliyuncs.com/wod/devops-docker:1.0
-    volumes:
-      - name: docker
-        path: /var/run/docker.sock
-    settings:
-      base: registry.cn-qingdao.aliyuncs.com/wod/alpine:3-mips64le
-      dockerfile: .beagle/dockerfile
-      repo: wod/dockerd
-      version: 'v23.0.1'
-      channel: mips64le
-      args: 'TARGETOS=linux,TARGETARCH=mips64le'
-      registry: registry.cn-qingdao.aliyuncs.com
-      registry_user:
-        from_secret: REGISTRY_USER_ALIYUN
-      registry_password:
-        from_secret: REGISTRY_PASSWORD_ALIYUN
-
   - name: docker-arch
     image: registry.cn-qingdao.aliyuncs.com/wod/devops-docker-manifest:1.0
     settings:
