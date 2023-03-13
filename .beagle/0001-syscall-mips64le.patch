@@ -1,0 +1,34 @@
+From 72a985cad32f801c6372779a1e800e2b93eb8363 Mon Sep 17 00:00:00 2001
+From: shucheng <shucheng@bd-apaas.com>
+Date: Mon, 13 Mar 2023 14:33:22 +0800
+Subject: [PATCH] mips64le
+
+---
+ vendor/github.com/moby/buildkit/snapshot/diffapply_unix.go | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/vendor/github.com/moby/buildkit/snapshot/diffapply_unix.go b/vendor/github.com/moby/buildkit/snapshot/diffapply_unix.go
+index 74cf40ab7b..8421116f78 100644
+--- a/vendor/github.com/moby/buildkit/snapshot/diffapply_unix.go
++++ b/vendor/github.com/moby/buildkit/snapshot/diffapply_unix.go
+@@ -119,7 +119,7 @@ type changeApply struct {
+ 
+ type inode struct {
+ 	ino uint64
+-	dev uint64
++	dev uint32
+ }
+ 
+ func statInode(stat *syscall.Stat_t) inode {
+@@ -298,7 +298,7 @@ func (a *applier) applyDelete(ctx context.Context, ca *changeApply) (bool, error
+ 			if ca.srcStat == nil {
+ 				ca.srcStat = &syscall.Stat_t{
+ 					Mode: syscall.S_IFCHR,
+-					Rdev: unix.Mkdev(0, 0),
++					Rdev: uint32(unix.Mkdev(0, 0)),
+ 				}
+ 				ca.srcPath = ""
+ 			}
+-- 
+2.30.2
+

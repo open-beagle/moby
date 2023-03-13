@@ -13,7 +13,7 @@ git merge v23.0.1
 ## build
 
 ```bash
-# amd64
+# arch
 docker run -it --rm \
 -v $PWD/:/go/src/github.com/docker/docker \
 -w /go/src/github.com/docker/docker \
