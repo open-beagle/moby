@@ -38,7 +38,7 @@ steps:
   - name: golang
     image: registry.cn-qingdao.aliyuncs.com/wod/golang:1.19-bullseye
     environment:
-      VERSION: 23.0.1-beagle
+      VERSION: 23.0.4-beagle
       PLATFORM: Beagle Cloud Team 2023-2028
       PRODUCT: Beagle Cloud Team 2023-2028
     commands:
@@ -53,7 +53,7 @@ steps:
       base: registry.cn-qingdao.aliyuncs.com/wod/alpine:3-amd64
       dockerfile: .beagle/dockerfile
       repo: wod/dockerd
-      version: 'v23.0.1'
+      version: 'v23.0.4'
       channel: amd64
       args: 'TARGETOS=linux,TARGETARCH=amd64'
       registry: registry.cn-qingdao.aliyuncs.com
@@ -71,7 +71,7 @@ steps:
       base: registry.cn-qingdao.aliyuncs.com/wod/alpine:3-arm64
       dockerfile: .beagle/dockerfile
       repo: wod/dockerd
-      version: 'v23.0.1'
+      version: 'v23.0.4'
       channel: arm64
       args: 'TARGETOS=linux,TARGETARCH=arm64'
       registry: registry.cn-qingdao.aliyuncs.com
@@ -89,7 +89,7 @@ steps:
       base: registry.cn-qingdao.aliyuncs.com/wod/alpine:3-ppc64le
       dockerfile: .beagle/dockerfile
       repo: wod/dockerd
-      version: 'v23.0.1'
+      version: 'v23.0.4'
       channel: ppc64le
       args: 'TARGETOS=linux,TARGETARCH=ppc64le'
       registry: registry.cn-qingdao.aliyuncs.com
@@ -107,9 +107,27 @@ steps:
       base: registry.cn-qingdao.aliyuncs.com/wod/alpine:3-mips64le
       dockerfile: .beagle/dockerfile
       repo: wod/dockerd
-      version: 'v23.0.1'
+      version: 'v23.0.4'
       channel: mips64le
       args: 'TARGETOS=linux,TARGETARCH=mips64le'
+      registry: registry.cn-qingdao.aliyuncs.com
+      registry_user:
+        from_secret: REGISTRY_USER_ALIYUN
+      registry_password:
+        from_secret: REGISTRY_PASSWORD_ALIYUN
+
+  - name: docker-loong64
+    image: registry.cn-qingdao.aliyuncs.com/wod/devops-docker:1.0
+    volumes:
+      - name: docker
+        path: /var/run/docker.sock
+    settings:
+      base: registry.cn-qingdao.aliyuncs.com/wod/alpine:3-loong64
+      dockerfile: .beagle/dockerfile
+      repo: wod/dockerd
+      version: 'v23.0.4'
+      channel: loong64
+      args: 'TARGETOS=linux,TARGETARCH=loong64'
       registry: registry.cn-qingdao.aliyuncs.com
       registry_user:
         from_secret: REGISTRY_USER_ALIYUN
