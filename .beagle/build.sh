@@ -7,7 +7,7 @@ apt-get install -y --no-install-recommends libbtrfs-dev libdevmapper-dev
 
 export GO111MODULE=off
 export DOCKER_LDFLAGS="-s -w"
-export DOCKER_BUILDTAGS+="seccomp"
+export DOCKER_BUILDTAGS+="seccomp selinux"
 
 export GOARCH=amd64
 export DOCKER_CROSSPLATFORMS=linux/$GOARCH
