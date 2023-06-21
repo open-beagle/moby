@@ -19,8 +19,6 @@ docker run -it \
 -v $PWD/:/go/src/github.com/docker/docker \
 -w /go/src/github.com/docker/docker \
 -e VERSION=24.0.2-beagle \
--e DOCKER_EXPERIMENTAL=1 \
--e GO111MODULE=auto \
 -e PLATFORM="Beagle Cloud Team 2023-2028" \
 registry.cn-qingdao.aliyuncs.com/wod/golang:1.20-loongnix \
 bash .beagle/build.sh
