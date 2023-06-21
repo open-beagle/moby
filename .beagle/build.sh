@@ -11,33 +11,28 @@ export DOCKER_GITCOMMIT=$(git rev-parse --short HEAD)
 export GOARCH=amd64
 hack/make.sh binary
 mkdir -p dist/$GOARCH
-mv bundles/binary-daemon/dockerd dist/$GOARCH/dockerd
-mv bundles/binary-daemon/docker-proxy dist/$GOARCH/docker-proxy
+mv bundles/binary-daemon/* dist/$GOARCH/
 
 export GOARCH=arm64
 hack/make.sh binary
 mkdir -p dist/$GOARCH
-mv bundles/binary-daemon/dockerd dist/$GOARCH/dockerd
-mv bundles/binary-daemon/docker-proxy dist/$GOARCH/docker-proxy
+mv bundles/binary-daemon/* dist/$GOARCH/
 
 export GOARCH=ppc64le
 hack/make.sh binary
 mkdir -p dist/$GOARCH
-mv bundles/binary-daemon/dockerd dist/$GOARCH/dockerd
-mv bundles/binary-daemon/docker-proxy dist/$GOARCH/docker-proxy
+mv bundles/binary-daemon/* dist/$GOARCH/
 
 git apply .beagle/v24.0.2-syscall-mips64le.patch
 export GOARCH=mips64le
 hack/make.sh binary
 mkdir -p dist/$GOARCH
-mv bundles/binary-daemon/dockerd dist/$GOARCH/dockerd
-mv bundles/binary-daemon/docker-proxy dist/$GOARCH/docker-proxy
+mv bundles/binary-daemon/* dist/$GOARCH/
 git apply -R .beagle/v24.0.2-syscall-mips64le.patch
 
 git apply .beagle/v24.0.2-add-seccomp-support-for-loong64.patch
 export GOARCH=loong64
 hack/make.sh binary
 mkdir -p dist/$GOARCH
-mv bundles/binary-daemon/dockerd dist/$GOARCH/dockerd
-mv bundles/binary-daemon/docker-proxy dist/$GOARCH/docker-proxy
+mv bundles/binary-daemon/* dist/$GOARCH/
 git apply -R .beagle/v24.0.2-add-seccomp-support-for-loong64.patch
