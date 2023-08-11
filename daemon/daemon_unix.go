@@ -105,7 +105,10 @@ func getMemoryResources(config containertypes.Resources) *specs.LinuxMemory {
 		memory.KernelTCP = &config.KernelMemoryTCP
 	}
 
-	return &memory
+	if memory != (specs.LinuxMemory{}) {
+		return &memory
+	}
+	return nil
 }
 
 func getPidsLimit(config containertypes.Resources) *specs.LinuxPids {
@@ -127,7 +130,7 @@ func getCPUResources(config containertypes.Resources) (*specs.LinuxCPU, error) {
 	if config.CPUShares < 0 {
 		return nil, fmt.Errorf("shares: invalid argument")
 	}
-	if config.CPUShares >= 0 {
+	if config.CPUShares > 0 {
 		shares := uint64(config.CPUShares)
 		cpu.Shares = &shares
 	}
@@ -168,7 +171,10 @@ func getCPUResources(config containertypes.Resources) (*specs.LinuxCPU, error) {
 		cpu.RealtimeRuntime = &c
 	}
 
-	return &cpu, nil
+	if cpu != (specs.LinuxCPU{}) {
+		return &cpu, nil
+	}
+	return nil, nil
 }
 
 func getBlkioWeightDevices(config containertypes.Resources) ([]specs.LinuxWeightDevice, error) {
@@ -695,7 +701,7 @@ func verifyPlatformContainerSettings(daemon *Daemon, hostConfig *containertypes.
 	if hostConfig.CgroupParent != "" && UsingSystemd(daemon.configStore) {
 		// CgroupParent for systemd cgroup should be named as "xxx.slice"
 		if len(hostConfig.CgroupParent) <= 6 || !strings.HasSuffix(hostConfig.CgroupParent, ".slice") {
-			return warnings, fmt.Errorf("cgroup-parent for systemd cgroup should be a valid slice named as \"xxx.slice\"")
+			return warnings, fmt.Errorf(`cgroup-parent for systemd cgroup should be a valid slice named as "xxx.slice"`)
 		}
 	}
 	if hostConfig.Runtime == "" {
@@ -748,7 +754,7 @@ func verifyDaemonSettings(conf *config.Config) error {
 	}
 	if conf.CgroupParent != "" && UsingSystemd(conf) {
 		if len(conf.CgroupParent) <= 6 || !strings.HasSuffix(conf.CgroupParent, ".slice") {
-			return fmt.Errorf("cgroup-parent for systemd cgroup should be a valid slice named as \"xxx.slice\"")
+			return fmt.Errorf(`cgroup-parent for systemd cgroup should be a valid slice named as "xxx.slice"`)
 		}
 	}
 
@@ -1063,7 +1069,7 @@ func initBridgeDriver(controller *libnetwork.Controller, config *config.Config) 
 		libnetwork.NetworkOptionIpam("default", "", v4Conf, v6Conf, nil),
 		libnetwork.NetworkOptionDeferIPv6Alloc(deferIPv6Alloc))
 	if err != nil {
-		return fmt.Errorf("Error creating default \"bridge\" network: %v", err)
+		return fmt.Errorf(`error creating default "bridge" network: %v`, err)
 	}
 	return nil
 }
@@ -1394,19 +1400,13 @@ func (daemon *Daemon) registerLinks(container *container.Container, hostConfig *
 // conditionalMountOnStart is a platform specific helper function during the
 // container start to call mount.
 func (daemon *Daemon) conditionalMountOnStart(container *container.Container) error {
-	if !daemon.UsesSnapshotter() {
-		return daemon.Mount(container)
-	}
-	return nil
+	return daemon.Mount(container)
 }
 
 // conditionalUnmountOnCleanup is a platform specific helper function called
 // during the cleanup of a container to unmount.
 func (daemon *Daemon) conditionalUnmountOnCleanup(container *container.Container) error {
-	if !daemon.UsesSnapshotter() {
-		return daemon.Unmount(container)
-	}
-	return nil
+	return daemon.Unmount(container)
 }
 
 // setDefaultIsolation determines the default isolation mode for the

@@ -86,11 +86,10 @@ func (i *ImageService) ImportImage(ctx context.Context, ref reference.Named, pla
 	ociCfg := containerConfigToOciImageConfig(imageConfig)
 	createdAt := time.Now()
 	config := ocispec.Image{
-		Architecture: platform.Architecture,
-		OS:           platform.OS,
-		Created:      &createdAt,
-		Author:       "",
-		Config:       ociCfg,
+		Platform: *platform,
+		Created:  &createdAt,
+		Author:   "",
+		Config:   ociCfg,
 		RootFS: ocispec.RootFS{
 			Type:    "layers",
 			DiffIDs: []digest.Digest{uncompressedDigest},
@@ -393,8 +392,11 @@ func containerConfigToOciImageConfig(cfg *container.Config) ocispec.ImageConfig 
 		StopSignal:  cfg.StopSignal,
 		ArgsEscaped: cfg.ArgsEscaped,
 	}
-	for k, v := range cfg.ExposedPorts {
-		ociCfg.ExposedPorts[string(k)] = v
+	if len(cfg.ExposedPorts) > 0 {
+		ociCfg.ExposedPorts = map[string]struct{}{}
+		for k, v := range cfg.ExposedPorts {
+			ociCfg.ExposedPorts[string(k)] = v
+		}
 	}
 
 	return ociCfg
