@@ -30,9 +30,9 @@ mkdir -p dist/$GOARCH
 mv bundles/binary-daemon/* dist/$GOARCH/
 git apply -R .beagle/v24.0.2-syscall-mips64le.patch
 
-# git apply .beagle/v24.0.2-add-seccomp-support-for-loong64.patch
-# export GOARCH=loong64
-# hack/make.sh binary
-# mkdir -p dist/$GOARCH
-# mv bundles/binary-daemon/* dist/$GOARCH/
-# git apply -R .beagle/v24.0.2-add-seccomp-support-for-loong64.patch
+git apply .beagle/v24.0.2-add-seccomp-support-for-loong64.patch
+export GOARCH=loong64
+hack/make.sh binary
+mkdir -p dist/$GOARCH
+mv bundles/binary-daemon/* dist/$GOARCH/
+git apply -R .beagle/v24.0.2-add-seccomp-support-for-loong64.patch

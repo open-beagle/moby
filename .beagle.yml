@@ -115,23 +115,23 @@ steps:
       registry_password:
         from_secret: REGISTRY_PASSWORD_ALIYUN
 
-  # - name: docker-loong64
-  #   image: registry.cn-qingdao.aliyuncs.com/wod/devops-docker:1.0
-  #   volumes:
-  #     - name: docker
-  #       path: /var/run/docker.sock
-  #   settings:
-  #     dockerfile: .beagle/dockerfile
-  #     base: registry.cn-qingdao.aliyuncs.com/wod/alpine:3-amd64
-  #     repo: wod/dockerd
-  #     version: v24.0.7
-  #     channel: loong64
-  #     args: 'TARGETOS=linux,TARGETARCH=loong64'
-  #     registry: registry.cn-qingdao.aliyuncs.com
-  #     registry_user:
-  #       from_secret: REGISTRY_USER_ALIYUN
-  #     registry_password:
-  #       from_secret: REGISTRY_PASSWORD_ALIYUN
+  - name: docker-loong64
+    image: registry.cn-qingdao.aliyuncs.com/wod/devops-docker:1.0
+    volumes:
+      - name: docker
+        path: /var/run/docker.sock
+    settings:
+      dockerfile: .beagle/dockerfile
+      base: registry.cn-qingdao.aliyuncs.com/wod/alpine:3-amd64
+      repo: wod/dockerd
+      version: v24.0.7
+      channel: loong64
+      args: 'TARGETOS=linux,TARGETARCH=loong64'
+      registry: registry.cn-qingdao.aliyuncs.com
+      registry_user:
+        from_secret: REGISTRY_USER_ALIYUN
+      registry_password:
+        from_secret: REGISTRY_PASSWORD_ALIYUN
 
 ---
 kind: secret
