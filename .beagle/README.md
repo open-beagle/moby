@@ -7,7 +7,7 @@ git remote add upstream git@github.com:moby/moby.git
 
 git fetch upstream
 
-git merge v24.0.7
+git merge v24.0.9
 ```
 
 ## build
@@ -18,7 +18,7 @@ docker run -it \
 --rm \
 -v $PWD/:/go/src/github.com/docker/docker \
 -w /go/src/github.com/docker/docker \
--e VERSION=24.0.7-beagle \
+-e VERSION=24.0.9-beagle \
 -e PLATFORM="Beagle Cloud Team 2023-2028" \
 registry.cn-qingdao.aliyuncs.com/wod/golang:1.21 \
 bash .beagle/build.sh
@@ -28,7 +28,7 @@ docker run -it \
 --rm \
 -v $PWD/:/go/src/github.com/docker/docker \
 -w /go/src/github.com/docker/docker \
--e VERSION=24.0.7-beagle \
+-e VERSION=24.0.9-beagle \
 -e PLATFORM="Beagle Cloud Team 2023-2028" \
 registry.cn-qingdao.aliyuncs.com/wod/golang:1.21-loongnix \
 bash .beagle/build-loong64.sh

@@ -38,7 +38,7 @@ steps:
   - name: golang
     image: registry.cn-qingdao.aliyuncs.com/wod/golang:1.21
     environment:
-      VERSION: 24.0.7-beagle
+      VERSION: 24.0.9-beagle
       PLATFORM: Beagle Cloud Team 2023-2028
     commands:
       - bash .beagle/build.sh
@@ -46,7 +46,7 @@ steps:
   - name: golang-loongnix
     image: registry.cn-qingdao.aliyuncs.com/wod/golang:1.21-loongnix
     environment:
-      VERSION: 24.0.7-beagle
+      VERSION: 24.0.9-beagle
       PLATFORM: Beagle Cloud Team 2023-2028
     commands:
       - bash .beagle/build-loong64.sh
@@ -60,7 +60,7 @@ steps:
       dockerfile: .beagle/dockerfile
       base: registry.cn-qingdao.aliyuncs.com/wod/alpine:3-amd64
       repo: wod/dockerd
-      version: v24.0.7
+      version: v24.0.9
       channel: amd64
       args: 'TARGETOS=linux,TARGETARCH=amd64'
       registry: registry.cn-qingdao.aliyuncs.com
@@ -78,7 +78,7 @@ steps:
       dockerfile: .beagle/dockerfile
       base: registry.cn-qingdao.aliyuncs.com/wod/alpine:3-arm64
       repo: wod/dockerd
-      version: v24.0.7
+      version: v24.0.9
       channel: arm64
       args: 'TARGETOS=linux,TARGETARCH=arm64'
       registry: registry.cn-qingdao.aliyuncs.com
@@ -96,7 +96,7 @@ steps:
       dockerfile: .beagle/dockerfile
       base: registry.cn-qingdao.aliyuncs.com/wod/alpine:3-ppc64le
       repo: wod/dockerd
-      version: v24.0.7
+      version: v24.0.9
       channel: ppc64le
       args: 'TARGETOS=linux,TARGETARCH=ppc64le'
       registry: registry.cn-qingdao.aliyuncs.com
@@ -114,7 +114,7 @@ steps:
       dockerfile: .beagle/dockerfile
       base: registry.cn-qingdao.aliyuncs.com/wod/alpine:3-mips64le
       repo: wod/dockerd
-      version: v24.0.7
+      version: v24.0.9
       channel: mips64le
       args: 'TARGETOS=linux,TARGETARCH=mips64le'
       registry: registry.cn-qingdao.aliyuncs.com
@@ -132,7 +132,7 @@ steps:
       dockerfile: .beagle/dockerfile
       base: registry.cn-qingdao.aliyuncs.com/wod/alpine:3-amd64
       repo: wod/dockerd
-      version: v24.0.7
+      version: v24.0.9
       channel: loong64
       args: 'TARGETOS=linux,TARGETARCH=loong64'
       registry: registry.cn-qingdao.aliyuncs.com
