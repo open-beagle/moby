@@ -1,3 +1,6 @@
+// FIXME(thaJeztah): remove once we are a module; the go:build directive prevents go from downgrading language version to go1.16:
+//go:build go1.19
+
 // Package daemon exposes the functions that occur on the host server
 // that the Docker daemon is running.
 //
@@ -472,9 +475,12 @@ func (daemon *Daemon) restore() error {
 				restartContainers[c] = make(chan struct{})
 				mapLock.Unlock()
 			} else if c.HostConfig != nil && c.HostConfig.AutoRemove {
-				mapLock.Lock()
-				removeContainers[c.ID] = c
-				mapLock.Unlock()
+				// Remove the container if live-restore is disabled or if the container has already exited.
+				if !daemon.configStore.LiveRestoreEnabled || !alive {
+					mapLock.Lock()
+					removeContainers[c.ID] = c
+					mapLock.Unlock()
+				}
 			}
 
 			c.Lock()
