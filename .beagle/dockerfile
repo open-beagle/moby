@@ -1,0 +1,14 @@
+ARG BASE
+
+FROM $BASE
+
+ARG AUTHOR
+ARG VERSION
+
+LABEL maintainer=$AUTHOR version=$VERSION
+
+ARG TARGETOS
+ARG TARGETARCH
+
+ADD ./dist/$TARGETARCH/dockerd /usr/local/bin/dockerd
+ADD ./dist/$TARGETARCH/docker-proxy /usr/local/bin/docker-proxy
