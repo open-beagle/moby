@@ -30,7 +30,7 @@ docker run -it \
 -w /go/src/github.com/docker/docker \
 -e VERSION=26.1.5-beagle \
 -e PLATFORM="Beagle Cloud Team 2023-2028" \
-registry.cn-qingdao.aliyuncs.com/wod/golang:1.21-loongnix \
+registry.cn-qingdao.aliyuncs.com/wod/golang:1.22-loongnix \
 bash .beagle/build-loong64.sh
 ```
 

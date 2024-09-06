@@ -17,15 +17,3 @@ export GOARCH=arm64
 hack/make.sh binary
 mkdir -p dist/$GOARCH
 mv bundles/binary-daemon/* dist/$GOARCH/
-
-export GOARCH=ppc64le
-hack/make.sh binary
-mkdir -p dist/$GOARCH
-mv bundles/binary-daemon/* dist/$GOARCH/
-
-git apply .beagle/v24.0.2-syscall-mips64le.patch
-export GOARCH=mips64le
-hack/make.sh binary
-mkdir -p dist/$GOARCH
-mv bundles/binary-daemon/* dist/$GOARCH/
-git apply -R .beagle/v24.0.2-syscall-mips64le.patch
