@@ -10,5 +10,5 @@ LABEL maintainer=$AUTHOR version=$VERSION
 ARG TARGETOS
 ARG TARGETARCH
 
-ADD ./dist/$TARGETARCH/dockerd /usr/local/bin/dockerd
-ADD ./dist/$TARGETARCH/docker-proxy /usr/local/bin/docker-proxy
+ADD ./bundles/$TARGETARCH/dockerd /usr/local/bin/dockerd
+ADD ./bundles/$TARGETARCH/docker-proxy /usr/local/bin/docker-proxy

@@ -15,23 +15,23 @@ git merge v27.2.0
 ```bash
 # cross
 docker run -it \
---rm \
--v $PWD/:/go/src/github.com/docker/docker \
--w /go/src/github.com/docker/docker \
--e VERSION=27.2.0-beagle \
--e PLATFORM="Beagle Cloud Team 2023-2028" \
-registry.cn-qingdao.aliyuncs.com/wod/golang:1.22 \
-bash .beagle/build.sh
+  --rm \
+  -v $PWD/:/go/src/github.com/docker/docker \
+  -w /go/src/github.com/docker/docker \
+  -e VERSION=27.2.0-beagle \
+  -e PLATFORM="Beagle Cloud Team 2023-2028" \
+  registry.cn-qingdao.aliyuncs.com/wod/golang:1.22 \
+  bash .beagle/build.sh
 
 # loong64
 docker run -it \
---rm \
--v $PWD/:/go/src/github.com/docker/docker \
--w /go/src/github.com/docker/docker \
--e VERSION=27.2.0-beagle \
--e PLATFORM="Beagle Cloud Team 2023-2028" \
-registry.cn-qingdao.aliyuncs.com/wod/golang:1.22-loongnix \
-bash .beagle/build-loong64.sh
+  --rm \
+  -v $PWD/:/go/src/github.com/docker/docker \
+  -w /go/src/github.com/docker/docker \
+  -e VERSION=27.2.0-beagle \
+  -e PLATFORM="Beagle Cloud Team 2023-2028" \
+  registry.cn-qingdao.aliyuncs.com/wod/golang:1.22-loongnix \
+  bash .beagle/build-loong64.sh
 ```
 
 ## cache

@@ -11,6 +11,6 @@ export DOCKER_GITCOMMIT=$(git rev-parse --short HEAD)
 git apply .beagle/v25.0.5-add-seccomp-support-for-loong64.patch
 export GOARCH=loong64
 hack/make.sh binary
-mkdir -p dist/$GOARCH
-mv bundles/binary-daemon/* dist/$GOARCH/
+mkdir -p bundles/$GOARCH
+mv bundles/binary-daemon/* bundles/$GOARCH/
 git apply -R .beagle/v25.0.5-add-seccomp-support-for-loong64.patch

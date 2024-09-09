@@ -10,10 +10,10 @@ export DOCKER_GITCOMMIT=$(git rev-parse --short HEAD)
 
 export GOARCH=amd64
 hack/make.sh binary
-mkdir -p dist/$GOARCH
-mv bundles/binary-daemon/* dist/$GOARCH/
+mkdir -p bundles/$GOARCH
+mv bundles/binary-daemon/* bundles/$GOARCH/
 
 export GOARCH=arm64
 hack/make.sh binary
-mkdir -p dist/$GOARCH
-mv bundles/binary-daemon/* dist/$GOARCH/
+mkdir -p bundles/$GOARCH
+mv bundles/binary-daemon/* bundles/$GOARCH/
