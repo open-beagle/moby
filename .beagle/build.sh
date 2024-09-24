@@ -2,6 +2,8 @@
 
 set -ex
 
+git config --global --add safe.directory $PWD
+
 export GO111MODULE=auto
 
 export DOCKER_EXPERIMENTAL=1
