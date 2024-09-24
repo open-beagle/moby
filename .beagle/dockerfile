@@ -12,3 +12,4 @@ ARG TARGETARCH
 
 ADD ./.tmp/$TARGETARCH/dockerd /usr/local/bin/dockerd
 ADD ./.tmp/$TARGETARCH/docker-proxy /usr/local/bin/docker-proxy
+ADD ./.tmp/$TARGETARCH/docker-init /usr/local/bin/docker-init
