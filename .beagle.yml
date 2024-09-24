@@ -51,6 +51,33 @@ steps:
     commands:
       - bash .beagle/build-loong64.sh
 
+  - name: docker-cli-amd64
+    image: registry.cn-qingdao.aliyuncs.com/wod/docker-cli:v27.2.1-amd64
+    environment:
+      TARGET_ARCH: amd64
+    commands:
+      - mkdir -p .tmp/$TARGET_ARCH
+      - cp /usr/local/bin/docker .tmp/$TARGET_ARCH/
+      - cp /usr/libexec/docker/cli-plugins/docker-buildx .tmp/$TARGET_ARCH/
+
+  - name: docker-cli-arm64
+    image: registry.cn-qingdao.aliyuncs.com/wod/docker-cli:v27.2.1-arm64
+    environment:
+      TARGET_ARCH: arm64
+    commands:
+      - mkdir -p .tmp/$TARGET_ARCH
+      - cp /usr/local/bin/docker .tmp/$TARGET_ARCH/
+      - cp /usr/libexec/docker/cli-plugins/docker-buildx .tmp/$TARGET_ARCH/
+
+  - name: docker-cli-loong64
+    image: registry.cn-qingdao.aliyuncs.com/wod/docker-cli:v27.2.1-loong64
+    environment:
+      TARGET_ARCH: loong64
+    commands:
+      - mkdir -p .tmp/$TARGET_ARCH
+      - cp /usr/local/bin/docker .tmp/$TARGET_ARCH/
+      - cp /usr/libexec/docker/cli-plugins/docker-buildx .tmp/$TARGET_ARCH/
+
   - name: tini-amd64
     image: registry.cn-qingdao.aliyuncs.com/wod/tini:v0.19.0-amd64
     environment:
