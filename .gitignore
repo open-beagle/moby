@@ -26,3 +26,5 @@ go-test-report.json
 junit-report.xml
 profile.out
 test.main
+
+.tmp/

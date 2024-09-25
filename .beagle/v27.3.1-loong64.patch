@@ -1,7 +1,7 @@
-From 8792022eebe681b5c87a472f5e6701d1d64780c1 Mon Sep 17 00:00:00 2001
+From cbfb57a5801a6b6882fbef5bf57135e8afbe10c7 Mon Sep 17 00:00:00 2001
 From: shucheng <shucheng@bd-apaas.com>
-Date: Fri, 26 Apr 2024 18:15:59 +0800
-Subject: [PATCH] v25.0.5 add seccomp support for loong64
+Date: Wed, 25 Sep 2024 18:11:36 +0800
+Subject: [PATCH] loong64
 
 ---
  oci/fixtures/default.json                                     | 4 ++++
@@ -57,19 +57,19 @@ index 09fb33765d..c0c5e31d40 100644
  }
  
 diff --git a/profiles/seccomp/seccomp_linux.go b/profiles/seccomp/seccomp_linux.go
-index 4d8fed68c6..9eb07416d0 100644
+index 17ee350e27..1b08dd8346 100644
 --- a/profiles/seccomp/seccomp_linux.go
 +++ b/profiles/seccomp/seccomp_linux.go
-@@ -41,6 +41,7 @@ var nativeToSeccomp = map[string]specs.Arch{
- 	"ppc64le":     specs.ArchPPC64LE,
+@@ -42,6 +42,7 @@ var nativeToSeccomp = map[string]specs.Arch{
+ 	"riscv64":     specs.ArchRISCV64,
  	"s390":        specs.ArchS390,
  	"s390x":       specs.ArchS390X,
 +	"loong64":     specs.ArchLOONGARCH64,
  }
  
  // GOARCH => libseccomp string
-@@ -59,6 +60,7 @@ var goToNative = map[string]string{
- 	"ppc64le":     "ppc64le",
+@@ -61,6 +62,7 @@ var goToNative = map[string]string{
+ 	"riscv64":     "riscv64",
  	"s390":        "s390",
  	"s390x":       "s390x",
 +	"loong64":     "loong64",
@@ -77,10 +77,10 @@ index 4d8fed68c6..9eb07416d0 100644
  
  // inSlice tests whether a string is contained in a slice of strings or not.
 diff --git a/vendor/github.com/opencontainers/runtime-spec/specs-go/config.go b/vendor/github.com/opencontainers/runtime-spec/specs-go/config.go
-index 4e7717d53f..96e04af65d 100644
+index d1236ba721..6b60e46086 100644
 --- a/vendor/github.com/opencontainers/runtime-spec/specs-go/config.go
 +++ b/vendor/github.com/opencontainers/runtime-spec/specs-go/config.go
-@@ -741,6 +741,7 @@ const (
+@@ -751,6 +751,7 @@ const (
  	ArchPARISC      Arch = "SCMP_ARCH_PARISC"
  	ArchPARISC64    Arch = "SCMP_ARCH_PARISC64"
  	ArchRISCV64     Arch = "SCMP_ARCH_RISCV64"
