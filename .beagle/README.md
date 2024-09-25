@@ -7,7 +7,7 @@ git remote add upstream git@github.com:moby/moby.git
 
 git fetch upstream
 
-git merge v27.2.1
+git merge v27.3.1
 ```
 
 ## build
@@ -18,9 +18,9 @@ docker run -it \
   --rm \
   -v $PWD/:/go/src/github.com/docker/docker \
   -w /go/src/github.com/docker/docker \
-  -e VERSION=27.2.1-beagle \
+  -e VERSION=27.3.1-beagle \
   -e PLATFORM="Beagle Cloud Team 2023-2028" \
-  registry.cn-qingdao.aliyuncs.com/wod/golang:1.22 \
+  registry.cn-qingdao.aliyuncs.com/wod/golang:1.23 \
   bash .beagle/build.sh
 
 # loong64
@@ -28,10 +28,34 @@ docker run -it \
   --rm \
   -v $PWD/:/go/src/github.com/docker/docker \
   -w /go/src/github.com/docker/docker \
-  -e VERSION=27.2.1-beagle \
+  -e VERSION=27.3.1-beagle \
   -e PLATFORM="Beagle Cloud Team 2023-2028" \
   registry.cn-qingdao.aliyuncs.com/wod/golang:1.22-loongnix \
   bash .beagle/build-loong64.sh
+```
+
+## components
+
+```bash
+# docker-cli-amd64
+docker run -it \
+  --rm \
+  -v $PWD/:/go/src/github.com/docker/docker \
+  -w /go/src/github.com/docker/docker \
+  -e TARGET_ARCH=amd64 \
+  -e PLATFORM="Beagle Cloud Team 2023-2028" \
+  registry.cn-qingdao.aliyuncs.com/wod/docker-cli:v27.3.1-amd64 \
+  bash -c "mkdir -p .tmp/$TARGET_ARCH && cp /usr/local/bin/docker .tmp/$TARGET_ARCH/ && cp /usr/libexec/docker/cli-plugins/docker-buildx .tmp/$TARGET_ARCH/"
+
+# docker-cli-arm64
+docker run -it \
+  --rm \
+  -v $PWD/:/go/src/github.com/docker/docker \
+  -w /go/src/github.com/docker/docker \
+  -e TARGET_ARCH=arm64 \
+  -e PLATFORM="Beagle Cloud Team 2023-2028" \
+  registry.cn-qingdao.aliyuncs.com/wod/docker-cli:v27.3.1-arm64 \
+  bash -c "mkdir -p .tmp/$TARGET_ARCH && cp /usr/local/bin/docker .tmp/$TARGET_ARCH/ && cp /usr/libexec/docker/cli-plugins/docker-buildx .tmp/$TARGET_ARCH/"
 ```
 
 ## cache
