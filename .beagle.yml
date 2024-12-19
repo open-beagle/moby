@@ -23,11 +23,11 @@ steps:
       restore: true
       mount:
         - ./.git
-      endpoint: https://cache.wodcloud.com
+      endpoint: https://cache.ali.wodcloud.com
       access_key:
-        from_secret: ACCESS_KEY_MINIO
+        from_secret: S3_ACCESS_KEY_ALIYUN
       secret_key:
-        from_secret: SECRET_KEY_MINIO
+        from_secret: S3_SECRET_KEY_ALIYUN
 
   - name: fetch
     image: registry.cn-qingdao.aliyuncs.com/wod/devops-git:1.0
@@ -36,9 +36,9 @@ steps:
         from_secret: SOCKS5_PROXY
 
   - name: golang
-    image: registry.cn-qingdao.aliyuncs.com/wod/golang:1.23
+    image: registry.cn-qingdao.aliyuncs.com/wod/golang:1.23-bookworm
     environment:
-      VERSION: 27.3.1-beagle
+      VERSION: 27.4.0-beagle
       PLATFORM: Beagle Cloud Team 2023-2028
     commands:
       - bash .beagle/build.sh
@@ -46,13 +46,13 @@ steps:
   - name: golang-loongnix
     image: registry.cn-qingdao.aliyuncs.com/wod/golang:1.22-loongnix
     environment:
-      VERSION: 27.3.1-beagle
+      VERSION: 27.4.0-beagle
       PLATFORM: Beagle Cloud Team 2023-2028
     commands:
       - bash .beagle/build-loong64.sh
 
   - name: docker-cli-amd64
-    image: registry.cn-qingdao.aliyuncs.com/wod/docker-cli:v27.3.1-amd64
+    image: registry.cn-qingdao.aliyuncs.com/wod/docker-cli:v27.4.0-amd64
     environment:
       TARGET_ARCH: amd64
     commands:
@@ -61,7 +61,7 @@ steps:
       - cp /usr/libexec/docker/cli-plugins/docker-buildx .tmp/$TARGET_ARCH/
 
   - name: docker-cli-arm64
-    image: registry.cn-qingdao.aliyuncs.com/wod/docker-cli:v27.3.1-arm64
+    image: registry.cn-qingdao.aliyuncs.com/wod/docker-cli:v27.4.0-arm64
     environment:
       TARGET_ARCH: arm64
     commands:
@@ -70,7 +70,7 @@ steps:
       - cp /usr/libexec/docker/cli-plugins/docker-buildx .tmp/$TARGET_ARCH/
 
   - name: docker-cli-loong64
-    image: registry.cn-qingdao.aliyuncs.com/wod/docker-cli:v27.3.1-loong64
+    image: registry.cn-qingdao.aliyuncs.com/wod/docker-cli:v27.4.0-loong64
     environment:
       TARGET_ARCH: loong64
     commands:
@@ -111,7 +111,7 @@ steps:
       dockerfile: .beagle/dockerfile
       base: registry.cn-qingdao.aliyuncs.com/wod/alpine:3-amd64
       repo: wod/dockerd
-      version: v27.3.1
+      version: v27.4.0
       channel: amd64
       args: "TARGETOS=linux,TARGETARCH=amd64"
       registry: registry.cn-qingdao.aliyuncs.com
@@ -129,7 +129,7 @@ steps:
       dockerfile: .beagle/dockerfile
       base: registry.cn-qingdao.aliyuncs.com/wod/alpine:3-arm64
       repo: wod/dockerd
-      version: v27.3.1
+      version: v27.4.0
       channel: arm64
       args: "TARGETOS=linux,TARGETARCH=arm64"
       registry: registry.cn-qingdao.aliyuncs.com
@@ -147,7 +147,7 @@ steps:
       dockerfile: .beagle/dockerfile
       base: registry.cn-qingdao.aliyuncs.com/wod/alpine:3-amd64
       repo: wod/dockerd
-      version: v27.3.1
+      version: v27.4.0
       channel: loong64
       args: "TARGETOS=linux,TARGETARCH=loong64"
       registry: registry.cn-qingdao.aliyuncs.com
@@ -179,14 +179,14 @@ get:
 
 ---
 kind: secret
-name: ACCESS_KEY_MINIO
+name: S3_ACCESS_KEY_ALIYUN
 get:
-  name: ACCESS_KEY_MINIO
+  name: S3_ACCESS_KEY_ALIYUN
   path: devops-secrets
 
 ---
 kind: secret
-name: SECRET_KEY_MINIO
+name: S3_SECRET_KEY_ALIYUN
 get:
-  name: SECRET_KEY_MINIO
+  name: S3_SECRET_KEY_ALIYUN
   path: devops-secrets
