@@ -32,6 +32,7 @@ jobs:
 
   build:
     runs-on: ubuntu-20.04
+    timeout-minutes: 20 # guardrails timeout for the whole job
     needs:
       - validate-dco
     strategy:
@@ -68,7 +69,8 @@ jobs:
           find ${{ env.DESTDIR }} -type f -exec file -e ascii -- {} +
 
   prepare-cross:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20 # guardrails timeout for the whole job
     needs:
       - validate-dco
     outputs:
@@ -90,6 +92,7 @@ jobs:
 
   cross:
     runs-on: ubuntu-20.04
+    timeout-minutes: 20 # guardrails timeout for the whole job
     needs:
       - validate-dco
       - prepare-cross
@@ -133,6 +136,7 @@ jobs:
 
   govulncheck:
     runs-on: ubuntu-24.04
+    timeout-minutes: 120 # guardrails timeout for the whole job
     permissions:
       # required to write sarif report
       security-events: write

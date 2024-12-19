@@ -1,3 +1,6 @@
+// FIXME(thaJeztah): remove once we are a module; the go:build directive prevents go from downgrading language version to go1.16:
+//go:build go1.22
+
 package containerd
 
 import (
@@ -19,6 +22,7 @@ import (
 	"github.com/docker/docker/daemon/images"
 	"github.com/docker/docker/errdefs"
 	"github.com/docker/docker/image"
+	"github.com/docker/docker/internal/sliceutil"
 	imagespec "github.com/moby/docker-image-spec/specs-go/v1"
 	"github.com/opencontainers/go-digest"
 	ocispec "github.com/opencontainers/image-spec/specs-go/v1"
@@ -109,7 +113,7 @@ func (i *ImageService) GetImage(ctx context.Context, refOrID string, options bac
 		}
 
 		img.Details = &image.Details{
-			References:  refs,
+			References:  sliceutil.Dedup(refs),
 			Size:        size,
 			Metadata:    nil,
 			Driver:      i.snapshotter,
@@ -200,10 +204,8 @@ func (i *ImageService) GetImageManifest(ctx context.Context, refOrID string, opt
 		}
 
 		if options.Platform != nil {
-			if plat == nil {
-				return nil, errdefs.NotFound(errors.Errorf("image with reference %s was found but does not match the specified platform: wanted %s, actual: nil", refOrID, platforms.Format(*options.Platform)))
-			} else if !platform.Match(*plat) {
-				return nil, errdefs.NotFound(errors.Errorf("image with reference %s was found but does not match the specified platform: wanted %s, actual: %s", refOrID, platforms.Format(*options.Platform), platforms.Format(*plat)))
+			if plat == nil || !platform.Match(*plat) {
+				return nil, errdefs.NotFound(errors.Errorf("image with reference %s was found but does not provide the specified platform (%s)", refOrID, platforms.FormatAll(*options.Platform)))
 			}
 		}
 

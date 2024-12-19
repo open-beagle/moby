@@ -1,5 +1,5 @@
 // FIXME(thaJeztah): remove once we are a module; the go:build directive prevents go from downgrading language version to go1.16:
-//go:build go1.21
+//go:build go1.22
 
 // Package daemon exposes the functions that occur on the host server
 // that the Docker daemon is running.
@@ -762,7 +762,7 @@ func (daemon *Daemon) parents(c *container.Container) map[string]*container.Cont
 func (daemon *Daemon) registerLink(parent, child *container.Container, alias string) error {
 	fullName := path.Join(parent.Name, alias)
 	if err := daemon.containersReplica.ReserveName(fullName, child.ID); err != nil {
-		if errors.Is(err, container.ErrNameReserved) {
+		if errdefs.IsConflict(err) {
 			log.G(context.TODO()).Warnf("error registering link for %s, to %s, as alias %s, ignoring: %v", parent.ID, child.ID, alias, err)
 			return nil
 		}
@@ -994,7 +994,9 @@ func NewDaemon(ctx context.Context, config *config.Config, pluginStore *plugin.S
 		// It is painful. Add WithBlock can prevent the edge case. And
 		// n common case, the containerd will be serving in shortly.
 		// It is not harm to add WithBlock for containerd connection.
-		grpc.WithBlock(),
+		//
+		// TODO(thaJeztah): update this list once https://github.com/containerd/containerd/pull/10250/commits/63b46881753588624b2eac986660458318581330 is in the 1.7 release.
+		grpc.WithBlock(), //nolint:staticcheck // Ignore SA1019: grpc.WithBlock is deprecated: this DialOption is not supported by NewClient. Will be supported throughout 1.x.
 
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 		grpc.WithConnectParams(connParams),

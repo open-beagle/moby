@@ -1,3 +1,6 @@
+// FIXME(thaJeztah): remove once we are a module; the go:build directive prevents go from downgrading language version to go1.16:
+//go:build go1.22
+
 package containerd
 
 import (
@@ -22,6 +25,7 @@ import (
 	imagetypes "github.com/docker/docker/api/types/image"
 	timetypes "github.com/docker/docker/api/types/time"
 	"github.com/docker/docker/errdefs"
+	"github.com/docker/docker/internal/sliceutil"
 	"github.com/moby/buildkit/util/attestation"
 	dockerspec "github.com/moby/docker-image-spec/specs-go/v1"
 	"github.com/opencontainers/go-digest"
@@ -248,13 +252,7 @@ func (i *ImageService) imageSummary(ctx context.Context, img images.Image, platf
 
 		if opts.Manifests {
 			defer func() {
-				// If the platform is available, prepend it to the list of platforms
-				// otherwise append it at the end.
-				if available {
-					manifestSummaries = append([]imagetypes.ManifestSummary{mfstSummary}, manifestSummaries...)
-				} else {
-					manifestSummaries = append(manifestSummaries, mfstSummary)
-				}
+				manifestSummaries = append(manifestSummaries, mfstSummary)
 			}()
 		}
 
@@ -507,7 +505,7 @@ func (i *ImageService) singlePlatformImage(ctx context.Context, contentStore con
 	summary := &imagetypes.Summary{
 		ParentID:    rawImg.Labels[imageLabelClassicBuilderParent],
 		ID:          target.String(),
-		RepoDigests: repoDigests,
+		RepoDigests: sliceutil.Dedup(repoDigests),
 		RepoTags:    repoTags,
 		Size:        totalSize,
 		Labels:      cfg.Config.Labels,
