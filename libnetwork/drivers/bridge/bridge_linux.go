@@ -5,11 +5,14 @@ import (
 	"fmt"
 	"net"
 	"net/netip"
+	"os"
 	"strconv"
 	"sync"
 
 	"github.com/containerd/log"
 	"github.com/docker/docker/errdefs"
+	"github.com/docker/docker/internal/modprobe"
+	"github.com/docker/docker/internal/nlwrap"
 	"github.com/docker/docker/libnetwork/datastore"
 	"github.com/docker/docker/libnetwork/driverapi"
 	"github.com/docker/docker/libnetwork/internal/netiputil"
@@ -141,7 +144,7 @@ type driver struct {
 	isolationChain2V6 *iptables.ChainInfo
 	networks          map[string]*bridgeNetwork
 	store             *datastore.Store
-	nlh               *netlink.Handle
+	nlh               nlwrap.Handle
 	configNetwork     sync.Mutex
 	sync.Mutex
 }
@@ -498,6 +501,14 @@ func (d *driver) configure(option map[string]interface{}) error {
 	}
 
 	if config.EnableIP6Tables {
+		if err := modprobe.LoadModules(context.TODO(), func() error {
+			iptable := iptables.GetIptable(iptables.IPv6)
+			_, err := iptable.Raw("-t", "filter", "-n", "-L", "FORWARD")
+			return err
+		}, "ip6_tables"); err != nil {
+			log.G(context.TODO()).WithError(err).Debug("Loading ip6_tables")
+		}
+
 		removeIPChains(iptables.IPv6)
 
 		natChainV6, filterChainV6, isolationChain1V6, isolationChain2V6, err = setupIPChains(config, iptables.IPv6)
@@ -760,7 +771,7 @@ func (d *driver) checkConflict(config *networkConfiguration) error {
 func (d *driver) createNetwork(config *networkConfiguration) (err error) {
 	// Initialize handle when needed
 	d.Lock()
-	if d.nlh == nil {
+	if d.nlh.Handle == nil {
 		d.nlh = ns.NlHandle()
 	}
 	d.Unlock()
@@ -894,6 +905,13 @@ func (d *driver) createNetwork(config *networkConfiguration) (err error) {
 
 	// Apply the prepared list of steps, and abort at the first error.
 	bridgeSetup.queueStep(setupDeviceUp)
+
+	if v := os.Getenv("DOCKER_TEST_BRIDGE_INIT_ERROR"); v == config.BridgeName {
+		bridgeSetup.queueStep(func(n *networkConfiguration, b *bridgeInterface) error {
+			return fmt.Errorf("DOCKER_TEST_BRIDGE_INIT_ERROR is %q", v)
+		})
+	}
+
 	return bridgeSetup.apply()
 }
 
@@ -913,6 +931,18 @@ func (d *driver) deleteNetwork(nid string) error {
 	d.Unlock()
 
 	if !ok {
+		// If the network was successfully created by an earlier incarnation of the daemon,
+		// but it failed to initialise this time, the network is still in the store (in
+		// case whatever caused the failure can be fixed for a future daemon restart). But,
+		// it's not in d.networks. To prevent the driver's state from getting out of step
+		// with its parent, make sure it's not in the store before reporting that it does
+		// not exist.
+		if err := d.storeDelete(&networkConfiguration{ID: nid}); err != nil && err != datastore.ErrKeyNotFound {
+			log.G(context.TODO()).WithFields(log.Fields{
+				"error":   err,
+				"network": nid,
+			}).Warnf("Failed to delete network from bridge store")
+		}
 		return types.InternalMaskableErrorf("network %s does not exist", nid)
 	}
 
@@ -974,7 +1004,7 @@ func (d *driver) deleteNetwork(nid string) error {
 	return d.storeDelete(config)
 }
 
-func addToBridge(ctx context.Context, nlh *netlink.Handle, ifaceName, bridgeName string) error {
+func addToBridge(ctx context.Context, nlh nlwrap.Handle, ifaceName, bridgeName string) error {
 	ctx, span := otel.Tracer("").Start(ctx, "libnetwork.drivers.bridge.addToBridge", trace.WithAttributes(
 		attribute.String("ifaceName", ifaceName),
 		attribute.String("bridgeName", bridgeName)))
@@ -991,7 +1021,7 @@ func addToBridge(ctx context.Context, nlh *netlink.Handle, ifaceName, bridgeName
 	return nil
 }
 
-func setHairpinMode(nlh *netlink.Handle, link netlink.Link, enable bool) error {
+func setHairpinMode(nlh nlwrap.Handle, link netlink.Link, enable bool) error {
 	err := nlh.LinkSetHairpin(link, enable)
 	if err != nil {
 		return fmt.Errorf("unable to set hairpin mode on %s via netlink: %v",
@@ -1364,7 +1394,7 @@ func (d *driver) Join(ctx context.Context, nid, eid string, sboxKey string, jinf
 func (d *driver) Leave(nid, eid string) error {
 	network, err := d.getNetwork(nid)
 	if err != nil {
-		return types.InternalMaskableErrorf("%s", err)
+		return types.InternalMaskableErrorf("%v", err)
 	}
 
 	endpoint, err := network.getEndpoint(eid)

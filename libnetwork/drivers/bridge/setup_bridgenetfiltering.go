@@ -7,10 +7,10 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"os/exec"
 	"syscall"
 
 	"github.com/containerd/log"
+	"github.com/docker/docker/internal/modprobe"
 )
 
 // setupIPv4BridgeNetFiltering checks whether IPv4 forwarding is enabled and, if
@@ -46,21 +46,28 @@ func setupIPv6BridgeNetFiltering(config *networkConfiguration, _ *bridgeInterfac
 }
 
 func loadBridgeNetFilterModule(fullPath string) error {
-	// br_netfilter implictly loads bridge module upon modprobe
-	modName := "br_netfilter"
-	if _, err := os.Stat(fullPath); err != nil {
-		if out, err := exec.Command("modprobe", "-va", modName).CombinedOutput(); err != nil {
-			log.G(context.TODO()).WithError(err).Errorf("Running modprobe %s failed with message: %s", modName, out)
-			return fmt.Errorf("cannot restrict inter-container communication: modprobe %s failed: %w", modName, err)
-		}
-	}
-	return nil
+	// br_netfilter implicitly loads bridge module upon modprobe
+	return modprobe.LoadModules(context.TODO(), func() error {
+		_, err := os.Stat(fullPath)
+		return err
+	}, "br_netfilter")
 }
 
 // Enable bridge net filtering if not already enabled. See GitHub issue #11404
-func enableBridgeNetFiltering(nfParam string) error {
+func enableBridgeNetFiltering(nfParam string) (retErr error) {
+	defer func() {
+		if retErr != nil {
+			if os.Getenv("DOCKER_IGNORE_BR_NETFILTER_ERROR") == "1" {
+				log.G(context.TODO()).WithError(retErr).Warnf("Continuing without enabling br_netfilter")
+				retErr = nil
+				return
+			}
+			retErr = fmt.Errorf("%w: set environment variable DOCKER_IGNORE_BR_NETFILTER_ERROR=1 to ignore", retErr)
+		}
+	}()
+
 	if err := loadBridgeNetFilterModule(nfParam); err != nil {
-		return fmt.Errorf("loadBridgeNetFilterModule failed: %s", err)
+		return fmt.Errorf("cannot restrict inter-container communication or run without the userland proxy: %w", err)
 	}
 	enabled, err := getKernelBoolParam(nfParam)
 	if err != nil {
@@ -72,7 +79,7 @@ func enableBridgeNetFiltering(nfParam string) error {
 			}
 			err = errors.New("ensure that the br_netfilter kernel module is loaded")
 		}
-		return fmt.Errorf("cannot restrict inter-container communication: %v", err)
+		return fmt.Errorf("cannot restrict inter-container communication or run without the userland proxy: %v", err)
 	}
 	if !enabled {
 		return os.WriteFile(nfParam, []byte{'1', '\n'}, 0o644)

@@ -25,7 +25,7 @@ import (
 	wlabel "github.com/docker/docker/builder/builder-next/worker/label"
 	"github.com/docker/docker/daemon/config"
 	"github.com/docker/docker/daemon/graphdriver"
-	units "github.com/docker/go-units"
+	"github.com/docker/go-units"
 	"github.com/moby/buildkit/cache"
 	"github.com/moby/buildkit/cache/metadata"
 	"github.com/moby/buildkit/cache/remotecache"
@@ -148,7 +148,7 @@ func newSnapshotterController(ctx context.Context, rt http.RoundTripper, opt Opt
 	}
 	wo.Executor = exec
 
-	w, err := mobyworker.NewContainerdWorker(ctx, wo, opt.Callbacks)
+	w, err := mobyworker.NewContainerdWorker(ctx, wo, opt.Callbacks, rt)
 	if err != nil {
 		return nil, err
 	}
@@ -193,6 +193,7 @@ func newSnapshotterController(ctx context.Context, rt http.RoundTripper, opt Opt
 		LeaseManager:   wo.LeaseManager,
 		ContentStore:   wo.ContentStore,
 		TraceCollector: getTraceExporter(ctx),
+		GarbageCollect: w.GarbageCollect,
 	})
 }
 
@@ -381,6 +382,7 @@ func newGraphDriverController(ctx context.Context, rt http.RoundTripper, opt Opt
 		Layers:            layers,
 		Platforms:         archutil.SupportedPlatforms(true),
 		LeaseManager:      lm,
+		GarbageCollect:    mdb.GarbageCollect,
 		Labels:            getLabels(opt, nil),
 	}
 
@@ -420,6 +422,7 @@ func newGraphDriverController(ctx context.Context, rt http.RoundTripper, opt Opt
 		HistoryDB:      historyDB,
 		HistoryConfig:  historyConf,
 		TraceCollector: getTraceExporter(ctx),
+		GarbageCollect: w.GarbageCollect,
 	})
 }
 
@@ -434,7 +437,7 @@ func getGCPolicy(conf config.BuilderConfig, root string) ([]client.PruneInfo, er
 		if conf.GC.DefaultKeepStorage != "" {
 			defaultKeepStorage, err = units.RAMInBytes(conf.GC.DefaultKeepStorage)
 			if err != nil {
-				return nil, errors.Wrapf(err, "could not parse '%s' as Builder.GC.DefaultKeepStorage config", conf.GC.DefaultKeepStorage)
+				return nil, errors.Wrapf(err, "failed to parse defaultKeepStorage")
 			}
 		}
 
@@ -443,9 +446,12 @@ func getGCPolicy(conf config.BuilderConfig, root string) ([]client.PruneInfo, er
 		} else {
 			gcPolicy = make([]client.PruneInfo, len(conf.GC.Policy))
 			for i, p := range conf.GC.Policy {
-				b, err := units.RAMInBytes(p.KeepStorage)
-				if err != nil {
-					return nil, err
+				var b int64
+				if p.KeepStorage != "" {
+					b, err = units.RAMInBytes(p.KeepStorage)
+					if err != nil {
+						return nil, errors.Wrapf(err, "failed to parse keepStorage")
+					}
 				}
 				if b == 0 {
 					b = defaultKeepStorage
