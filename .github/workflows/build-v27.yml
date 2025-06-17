@@ -1,0 +1,115 @@
+name: Build Release v27 Images
+
+on:
+  push:
+    branches:
+      - release-v27
+  workflow_dispatch: # 允许手动触发
+
+env:
+  BUILD_VERSION: v27.5.1
+  DOCKER_CLI_VERSION: v27.5.1
+  DOCKER_INIT_VERSION: v0.19.0
+
+jobs:
+  build:
+    name: Build Images
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Login to Github Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Cross Build
+        env:
+          BUILD_VERSION: ${{ env.BUILD_VERSION }}
+        run: |
+          docker run --rm -v ${{ github.workspace }}:/go/src/github.com/docker/docker \
+            -w /go/src/github.com/docker/docker \
+            -e VERSION=${{ env.BUILD_VERSION }}-beagle \
+            -e PLATFORM="Beagle Cloud Team 2023-2028" \
+            ghcr.io/${{ github.repository_owner }}/golang:1.23-bookworm \
+            bash -c "bash ./.beagle/build.sh"
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: docker-cli-amd64
+        env:
+          TARGET_ARCH: amd64
+        run: |
+          docker run --rm -v ${{ github.workspace }}:/go/src/github.com/docker/docker \
+            -w /go/src/github.com/docker/docker \
+            ghcr.io/${{ github.repository_owner }}/docker-cli:${{ env.DOCKER_CLI_VERSION}}-${{ env.TARGET_ARCH }} \
+            sh -c "mkdir -p .tmp/${{ env.TARGET_ARCH }} && cp /usr/local/bin/docker .tmp/$TARGET_ARCH/ && cp /usr/libexec/docker/cli-plugins/docker-buildx .tmp/$TARGET_ARCH/"
+
+      - name: docker-cli-arm64
+        env:
+          TARGET_ARCH: arm64
+        run: |
+          docker run --rm -v ${{ github.workspace }}:/go/src/github.com/docker/docker \
+            -w /go/src/github.com/docker/docker \
+            ghcr.io/${{ github.repository_owner }}/docker-cli:${{ env.DOCKER_CLI_VERSION}}-${{ env.TARGET_ARCH }} \
+            sh -c "mkdir -p .tmp/${{ env.TARGET_ARCH }} && cp /usr/local/bin/docker .tmp/$TARGET_ARCH/ && cp /usr/libexec/docker/cli-plugins/docker-buildx .tmp/$TARGET_ARCH/"
+
+      - name: tini-amd64
+        env:
+          TARGET_ARCH: amd64
+        run: |
+          docker run --rm -v ${{ github.workspace }}:/go/src/github.com/docker/docker \
+            -w /go/src/github.com/docker/docker \
+            ghcr.io/${{ github.repository_owner }}/tini:${{ env.DOCKER_INIT_VERSION}}-${{ env.TARGET_ARCH }} \
+            sh -c "mkdir -p .tmp/${{ env.TARGET_ARCH }} && cp /usr/local/bin/tini-static .tmp/${{ env.TARGET_ARCH }}/docker-init"
+
+      - name: tini-arm64
+        env:
+          TARGET_ARCH: arm64
+        run: |
+          docker run --rm -v ${{ github.workspace }}:/go/src/github.com/docker/docker \
+            -w /go/src/github.com/docker/docker \
+            ghcr.io/${{ github.repository_owner }}/nerdctl:${{ env.DOCKER_INIT_VERSION}}-${{ env.TARGET_ARCH }} \
+            sh -c "mkdir -p .tmp/${{ env.TARGET_ARCH }} && cp /usr/local/bin/tini-static .tmp/${{ env.TARGET_ARCH }}/docker-init"
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push images for amd64
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: .beagle/dockerfile
+          push: true
+          platforms: linux/amd64
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/dockerd:${{ env.BUILD_VERSION }}-amd64
+          build-args: |
+            BASE=alpine:3
+            VERSION=${{ env.BUILD_VERSION }}
+            TARGETOS=linux
+            TARGETARCH=amd64
+          provenance: false
+          sbom: false
+
+      - name: Build and push images for arm64
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: .beagle/dockerfile
+          push: true
+          platforms: linux/arm64
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/dockerd:${{ env.BUILD_VERSION }}-arm64
+          build-args: |
+            BASE=alpine:3
+            AUTHOR=${{ github.actor }}
+            VERSION=${{ env.BUILD_VERSION }}
+            TARGETOS=linux
+            TARGETARCH=arm64
+          provenance: false
+          sbom: false
