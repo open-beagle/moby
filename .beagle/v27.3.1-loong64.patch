@@ -1,0 +1,93 @@
+From cbfb57a5801a6b6882fbef5bf57135e8afbe10c7 Mon Sep 17 00:00:00 2001
+From: shucheng <shucheng@bd-apaas.com>
+Date: Wed, 25 Sep 2024 18:11:36 +0800
+Subject: [PATCH] loong64
+
+---
+ oci/fixtures/default.json                                     | 4 ++++
+ profiles/seccomp/default.json                                 | 4 ++++
+ profiles/seccomp/default_linux.go                             | 4 ++++
+ profiles/seccomp/seccomp_linux.go                             | 2 ++
+ .../github.com/opencontainers/runtime-spec/specs-go/config.go | 1 +
+ 5 files changed, 15 insertions(+)
+
+diff --git a/oci/fixtures/default.json b/oci/fixtures/default.json
+index 8d4d21145e..c934191206 100644
+--- a/oci/fixtures/default.json
++++ b/oci/fixtures/default.json
+@@ -47,6 +47,10 @@
+ 			"subArchitectures": [
+ 				"SCMP_ARCH_S390"
+ 			]
++		},
++		{
++			"architecture": "SCMP_ARCH_LOONGARCH64",
++			"subArchitectures": null
+ 		}
+ 	],
+ 	"syscalls": [
+diff --git a/profiles/seccomp/default.json b/profiles/seccomp/default.json
+index c4d91109c3..0d77b83a56 100644
+--- a/profiles/seccomp/default.json
++++ b/profiles/seccomp/default.json
+@@ -52,6 +52,10 @@
+ 		{
+ 			"architecture": "SCMP_ARCH_RISCV64",
+ 			"subArchitectures": null
++		},
++		{
++			"architecture": "SCMP_ARCH_LOONGARCH64",
++			"subArchitectures": null
+ 		}
+ 	],
+ 	"syscalls": [
+diff --git a/profiles/seccomp/default_linux.go b/profiles/seccomp/default_linux.go
+index 09fb33765d..c0c5e31d40 100644
+--- a/profiles/seccomp/default_linux.go
++++ b/profiles/seccomp/default_linux.go
+@@ -39,6 +39,10 @@ func arches() []Architecture {
+ 			Arch:      specs.ArchRISCV64,
+ 			SubArches: nil,
+ 		},
++		{
++			Arch:      specs.ArchLOONGARCH64,
++			SubArches: nil,
++		},
+ 	}
+ }
+ 
+diff --git a/profiles/seccomp/seccomp_linux.go b/profiles/seccomp/seccomp_linux.go
+index 17ee350e27..1b08dd8346 100644
+--- a/profiles/seccomp/seccomp_linux.go
++++ b/profiles/seccomp/seccomp_linux.go
+@@ -42,6 +42,7 @@ var nativeToSeccomp = map[string]specs.Arch{
+ 	"riscv64":     specs.ArchRISCV64,
+ 	"s390":        specs.ArchS390,
+ 	"s390x":       specs.ArchS390X,
++	"loong64":     specs.ArchLOONGARCH64,
+ }
+ 
+ // GOARCH => libseccomp string
+@@ -61,6 +62,7 @@ var goToNative = map[string]string{
+ 	"riscv64":     "riscv64",
+ 	"s390":        "s390",
+ 	"s390x":       "s390x",
++	"loong64":     "loong64",
+ }
+ 
+ // inSlice tests whether a string is contained in a slice of strings or not.
+diff --git a/vendor/github.com/opencontainers/runtime-spec/specs-go/config.go b/vendor/github.com/opencontainers/runtime-spec/specs-go/config.go
+index d1236ba721..6b60e46086 100644
+--- a/vendor/github.com/opencontainers/runtime-spec/specs-go/config.go
++++ b/vendor/github.com/opencontainers/runtime-spec/specs-go/config.go
+@@ -751,6 +751,7 @@ const (
+ 	ArchPARISC      Arch = "SCMP_ARCH_PARISC"
+ 	ArchPARISC64    Arch = "SCMP_ARCH_PARISC64"
+ 	ArchRISCV64     Arch = "SCMP_ARCH_RISCV64"
++	ArchLOONGARCH64 Arch = "SCMP_ARCH_LOONGARCH64"
+ )
+ 
+ // LinuxSeccompAction taken upon Seccomp rule match
+-- 
+2.39.2
+
