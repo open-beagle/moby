@@ -10,4 +10,4 @@ LABEL maintainer=$AUTHOR version=$VERSION
 ARG TARGETOS
 ARG TARGETARCH
 
-COPY ./.tmp/$TARGETARCH/ /usr/local/bin/
+COPY ./.tmp/$TARGETARCH/ /opt/docker/bin/
