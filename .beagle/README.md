@@ -19,7 +19,7 @@ docker run -it \
   -v $PWD/:/go/src/github.com/docker/docker \
   -w /go/src/github.com/docker/docker \
   -e VERSION=28.2.2-beagle \
-  -e PLATFORM="Beagle Cloud Team 2023-2028" \
+  -e PLATFORM="© 2018 BeagleCloud Team" \
   registry.cn-qingdao.aliyuncs.com/wod/golang:1.24-bookworm \
   bash .beagle/build.sh
 ```
@@ -33,7 +33,7 @@ docker run -it \
   -v $PWD/:/go/src/github.com/docker/docker \
   -w /go/src/github.com/docker/docker \
   -e TARGET_ARCH=amd64 \
-  -e PLATFORM="Beagle Cloud Team 2023-2028" \
+  -e PLATFORM="© 2018 BeagleCloud Team" \
   registry.cn-qingdao.aliyuncs.com/wod/docker-cli:v28.2.2-amd64 \
   bash -c "mkdir -p .tmp/$TARGET_ARCH && cp /usr/local/bin/docker .tmp/$TARGET_ARCH/ && cp /usr/libexec/docker/cli-plugins/docker-buildx .tmp/$TARGET_ARCH/"
 
@@ -43,7 +43,7 @@ docker run -it \
   -v $PWD/:/go/src/github.com/docker/docker \
   -w /go/src/github.com/docker/docker \
   -e TARGET_ARCH=arm64 \
-  -e PLATFORM="Beagle Cloud Team 2023-2028" \
+  -e PLATFORM="© 2018 Beagle Cloud Team" \
   registry.cn-qingdao.aliyuncs.com/wod/docker-cli:v28.2.2-arm64 \
   bash -c "mkdir -p .tmp/$TARGET_ARCH && cp /usr/local/bin/docker .tmp/$TARGET_ARCH/ && cp /usr/libexec/docker/cli-plugins/docker-buildx .tmp/$TARGET_ARCH/"
 ```
