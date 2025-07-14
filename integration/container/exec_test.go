@@ -1,4 +1,4 @@
-package container // import "github.com/docker/docker/integration/container"
+package container
 
 import (
 	"encoding/json"
@@ -127,9 +127,8 @@ func TestExecResize(t *testing.T) {
 		cmd = []string{"sleep", "240"}
 	}
 	resp, err := apiClient.ContainerExecCreate(ctx, cID, containertypes.ExecOptions{
-		Tty:    true, // Windows requires a TTY for the resize to work, otherwise fails with "is not a tty: failed precondition", see https://github.com/moby/moby/pull/48665#issuecomment-2412530345
-		Detach: true,
-		Cmd:    cmd,
+		Tty: true, // Windows requires a TTY for the resize to work, otherwise fails with "is not a tty: failed precondition", see https://github.com/moby/moby/pull/48665#issuecomment-2412530345
+		Cmd: cmd,
 	})
 	assert.NilError(t, err)
 	execID := resp.ID

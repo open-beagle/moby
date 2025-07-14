@@ -1,4 +1,4 @@
-package system // import "github.com/docker/docker/integration/system"
+package system
 
 import (
 	"context"
@@ -136,7 +136,7 @@ func TestEventsVolumeCreate(t *testing.T) {
 			case m := <-messages:
 				evts = append(evts, m)
 			case err := <-errs:
-				if err == io.EOF {
+				if errors.Is(err, io.EOF) {
 					return evts, nil
 				}
 				return nil, err

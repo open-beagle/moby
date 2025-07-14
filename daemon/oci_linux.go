@@ -1,4 +1,4 @@
-package daemon // import "github.com/docker/docker/daemon"
+package daemon
 
 import (
 	"context"
@@ -715,7 +715,7 @@ func withCommonOptions(daemon *Daemon, daemonCfg *dconfig.Config, c *container.C
 			return err
 		}
 		cwd := c.Config.WorkingDir
-		if len(cwd) == 0 {
+		if cwd == "" {
 			cwd = "/"
 		}
 		if s.Process == nil {

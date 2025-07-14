@@ -1,7 +1,7 @@
 // FIXME(thaJeztah): remove once we are a module; the go:build directive prevents go from downgrading language version to go1.16:
 //go:build go1.23
 
-package daemon // import "github.com/docker/docker/testutil/daemon"
+package daemon
 
 import (
 	"bufio"
@@ -153,7 +153,7 @@ func NewDaemon(workingDir string, ops ...Option) (*Daemon, error) {
 		op(d)
 	}
 
-	if len(d.resolvConfContent) > 0 {
+	if d.resolvConfContent != "" {
 		path := filepath.Join(d.Folder, "resolv.conf")
 		if err := os.WriteFile(path, []byte(d.resolvConfContent), 0644); err != nil {
 			return nil, fmt.Errorf("failed to write docker resolv.conf to %q: %v", path, err)
@@ -572,7 +572,7 @@ func (d *Daemon) StartWithLogFile(out *os.File, providedArgs ...string) error {
 		Transport: clientConfig.transport,
 	}
 
-	req, err := http.NewRequest(http.MethodGet, "/_ping", nil)
+	req, err := http.NewRequest(http.MethodGet, "/_ping", http.NoBody)
 	if err != nil {
 		return errors.Wrapf(err, "[%s] could not create new request", d.id)
 	}
@@ -693,7 +693,7 @@ func (d *Daemon) Stop(t testing.TB) {
 	t.Helper()
 	err := d.StopWithError()
 	if err != nil {
-		if err != errDaemonNotStarted {
+		if !errors.Is(err, errDaemonNotStarted) {
 			t.Fatalf("[%s] error while stopping the daemon: %v", d.id, err)
 		} else {
 			t.Logf("[%s] daemon is not started", d.id)
@@ -947,7 +947,7 @@ func (d *Daemon) queryRootDir() (string, error) {
 		Transport: clientConfig.transport,
 	}
 
-	req, err := http.NewRequest(http.MethodGet, "/info", nil)
+	req, err := http.NewRequest(http.MethodGet, "/info", http.NoBody)
 	if err != nil {
 		return "", err
 	}

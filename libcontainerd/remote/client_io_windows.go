@@ -1,11 +1,11 @@
-package remote // import "github.com/docker/docker/libcontainerd/remote"
+package remote
 
 import (
 	"io"
 	"net"
 	"sync"
 
-	winio "github.com/Microsoft/go-winio"
+	"github.com/Microsoft/go-winio"
 	"github.com/containerd/containerd/v2/pkg/cio"
 	"github.com/containerd/log"
 	"github.com/pkg/errors"

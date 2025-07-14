@@ -1,6 +1,6 @@
 //go:build windows
 
-package windows // import "github.com/docker/docker/daemon/graphdriver/windows"
+package windows
 
 import (
 	"archive/tar"
@@ -18,7 +18,7 @@ import (
 	"sync"
 	"time"
 
-	winio "github.com/Microsoft/go-winio"
+	"github.com/Microsoft/go-winio"
 	"github.com/Microsoft/go-winio/backuptar"
 	winiofs "github.com/Microsoft/go-winio/pkg/fs"
 	"github.com/Microsoft/go-winio/vhd"

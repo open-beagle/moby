@@ -1,4 +1,4 @@
-package remotecontext // import "github.com/docker/docker/builder/remotecontext"
+package remotecontext
 
 import (
 	"bytes"
@@ -36,7 +36,7 @@ func TestSelectAcceptableMIME(t *testing.T) {
 	}
 
 	for _, m := range invalidMimeStrings {
-		if len(selectAcceptableMIME(m)) > 0 {
+		if selectAcceptableMIME(m) != "" {
 			t.Fatalf("Should not have accepted %q", m)
 		}
 	}
