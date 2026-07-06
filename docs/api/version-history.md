@@ -20,6 +20,22 @@ keywords: "API, Docker, rcli, REST, documentation"
 * `GET /images/json` now sets the value of `Containers` field for all images
   to the count of containers using the image.
   This field was previously always -1.
+* Deprecated: The field `NetworkSettings.Bridge` returned by `GET /containers/{id}/json`
+  is deprecated and will be removed in the next API version.
+* Deprecated: The field `KernelMemoryTCP` as part of `POST /containers/{id}/update`
+  and returned by `GET /containers/{id}/json` is deprecated and will be removed
+  in the next API version.
+* Deprecated: The field `KernelMemoryTCP` as part of `GET /info` is deprecated
+  and will be removed in the next API version.
+* Deprecated: the `Parent` and `DockerVersion` fields returned by the
+  `GET /images/{name}/json` endpoint are deprecated. These fields are set by
+  the legacy builder, and are no longer set when using BuildKit. The API
+  continues returning these fields when set for informational purposes, but
+  they should not be depended on as they will be omitted once the legacy builder
+  is removed.
+* Deprecated: the `Config.DockerVersion` field returned by the `GET /plugins`
+  and `GET /images/{name}/json` endpoints is deprecated. The field is no
+  longer set, and is omitted when empty.
 
 ## v1.50 API changes
 
@@ -974,9 +990,10 @@ are not part of the underlying image's Config, and deprecated:
 * `GET /containers/(name)/json` now accepts a `size` parameter. Setting this parameter to '1' returns container size information in the `SizeRw` and `SizeRootFs` fields.
 * `GET /containers/(name)/json` now returns a `NetworkSettings.Networks` field,
   detailing network settings per network. This field deprecates the
-  `NetworkSettings.Gateway`, `NetworkSettings.IPAddress`,
-  `NetworkSettings.IPPrefixLen`, and `NetworkSettings.MacAddress` fields, which
-  are still returned for backward-compatibility, but will be removed in a future version.
+  `NetworkSettings.EndpointID`, `NetworkSettings.Gateway`, `NetworkSettings.GlobalIPv6Address`,
+  `NetworkSettings.GlobalIPv6PrefixLen` `NetworkSettings.IPAddress`, `NetworkSettings.IPPrefixLen`,
+  `NetworkSettings.IPv6Gateway`, `NetworkSettings.MacAddress` fields, which are
+  still returned for backward-compatibility, but will be removed in a future version.
 * `GET /exec/(id)/json` now returns a `NetworkSettings.Networks` field,
   detailing networksettings per network. This field deprecates the
   `NetworkSettings.Gateway`, `NetworkSettings.IPAddress`,

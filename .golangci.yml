@@ -3,7 +3,7 @@ version: "2"
 run:
   # prevent golangci-lint from deducting the go version to lint for through go.mod,
   # which causes it to fallback to go1.17 semantics.
-  go: "1.24.5"
+  go: "1.24.8"
   concurrency: 2
   # Only supported with go modules enabled (build flag -mod=vendor only valid when using modules)
   # modules-download-mode: vendor
@@ -334,6 +334,11 @@ linters:
         path: "libnetwork/cmd/networkdb-test/dbclient"
         linters:
           - forbidigo
+      
+      # Ignore deprecated disk usage type warnings which will be moved internal to the daemon backend in the next major release.
+      - text: "SA1019: ((buildtypes|build).CacheDiskUsage|(container|containertypes|image|volume|volumetypes).DiskUsage) is deprecated"
+        linters:
+          - staticcheck
 
     # Log a warning if an exclusion rule is unused.
     # Default: false
