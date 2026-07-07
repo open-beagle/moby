@@ -7,8 +7,8 @@ on:
   workflow_dispatch: # 允许手动触发
 
 env:
-  BUILD_VERSION: v28.3.3
-  DOCKER_CLI_VERSION: v28.3.3
+  BUILD_VERSION: v28.5.1
+  DOCKER_CLI_VERSION: v28.5.1
   DOCKER_INIT_VERSION: v0.19.0
 
 jobs:
